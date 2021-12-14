@@ -53,6 +53,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 
 		/* ------------JFrame setup-------------- */
+		this.setIconImage(new ImageIcon("src//ship.png").getImage());
 		this.setSize(515, 700);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
@@ -72,10 +73,9 @@ public class MainFrame extends JFrame implements ActionListener {
 			if (e.getSource() == ships[i]) {
 
 				ships[i].setEnabled(false);
-				ships[i].setFocusable(false);
 				System.out.print("Shot to " + ((int) i / 10 + 1) + " - " + ((int) i % 10 + 1) + " ... ");
 				if (checkIfShipHit((int) i / 10, (int) i % 10)) {
-					ships[i].setText("H");
+					ships[i].setText("+");
 					ships[i].setBackground(Color.red);
 					System.out.println("Hit!");
 					progressBar.setValue(progressBar.getValue() + 1);
