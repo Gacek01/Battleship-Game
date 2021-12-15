@@ -49,6 +49,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		for (int i = 0; i < 100; i++) {
 			ships[i] = new JButton(String.valueOf(i + 1));
 			ships[i].addActionListener(this);
+			ships[i].setFocusable(false);
 			centerPanel.add(ships[i]);
 		}
 
