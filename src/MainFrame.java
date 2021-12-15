@@ -6,9 +6,10 @@ import javax.swing.*;
 public class MainFrame extends JFrame implements ActionListener {
 
 	public final int UNIT_SIZE = 50;
+	boolean[][] board = new boolean[10][10];
 	JButton[] ships = new JButton[100];
 	JLabel[] labels = new JLabel[10];
-	boolean[][] board = new boolean[10][10];
+	JLabel shotsLabel = new JLabel("0");
 	Font mainFont = new Font("Arial", Font.BOLD, 25);
 	JProgressBar progressBar = new JProgressBar(0, 20);
 	byte shipsSunk = 0;
@@ -33,13 +34,14 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		/* ------------Bottom panel, progress info setup-------------- */
 		JPanel bottomPanel = new JPanel();
-		bottomPanel.setBounds(0, 600, 500, 50);
-
+		bottomPanel.setBounds(0, 600, 500, 100);
 		progressBar.setValue(0);
 		progressBar.setStringPainted(true);
 		progressBar.setFont(mainFont);
-		progressBar.setPreferredSize(new Dimension(500, 50));
+		progressBar.setPreferredSize(new Dimension(500, 100));
 		progressBar.setForeground(Color.red);
+		shotsLabel.setFont(mainFont);
+		bottomPanel.add(shotsLabel);
 		bottomPanel.add(progressBar);
 
 		/* ------------Main Game Board setup-------------- */
@@ -52,11 +54,12 @@ public class MainFrame extends JFrame implements ActionListener {
 			ships[i].addActionListener(this);
 			ships[i].setFocusable(false);
 			centerPanel.add(ships[i]);
+
 		}
 
 		/* ------------JFrame setup-------------- */
 		this.setIconImage(new ImageIcon("src//ship.png").getImage());
-		this.setSize(515, 700);
+		this.setSize(515, 800);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 		this.setLayout(null);
@@ -73,8 +76,9 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		for (int i = 0; i < 100; i++) {
 			if (e.getSource() == ships[i]) {
-
+				shotsFired++;
 				ships[i].setEnabled(false);
+				shotsLabel.setText(String.valueOf(shotsFired));
 				System.out.print("Shot to " + ((int) i / 10 + 1) + " - " + ((int) i % 10 + 1) + " ... ");
 				if (checkIfShipHit((int) i / 10, (int) i % 10)) {
 					ships[i].setText("+");
