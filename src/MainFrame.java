@@ -12,7 +12,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	Font mainFont = new Font("Arial", Font.BOLD, 25);
 	JProgressBar progressBar = new JProgressBar(0, 20);
 	byte shipsSunk = 0;
-
+	byte shotsFired = 0;
+	
 	MainFrame() {
 
 		// Test data
