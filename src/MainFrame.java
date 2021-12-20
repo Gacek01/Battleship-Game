@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
-
 import javax.swing.*;
 
 public class MainFrame extends JFrame implements ActionListener {
@@ -25,7 +24,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		topPanel.setBounds(15, 0, 500, 50);
 
 		for (int i = 0; i < 10; i++) {
-			labels[i] = new JLabel(String.valueOf(i + 1));
+			labels[i] = new JLabel(String.valueOf((char) (i + 65)));
 			labels[i].setFont(mainFont);
 			topPanel.add(labels[i]);
 		}
@@ -38,6 +37,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		progressBar.setFont(mainFont);
 		progressBar.setPreferredSize(new Dimension(500, 100));
 		progressBar.setForeground(Color.red);
+		progressBar.setBackground(Color.blue);
 		progressBar.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
 		shotsLabel.setFont(mainFont);
 		bottomPanel.add(new JLabel("Shots fired: ")).setFont(mainFont);
@@ -80,21 +80,24 @@ public class MainFrame extends JFrame implements ActionListener {
 				shotsFired++;
 				ships[i].setEnabled(false);
 				shotsLabel.setText(String.valueOf(shotsFired));
-				System.out.print("Shot to " + ((int) i / 10 + 1) + " - " + ((int) i % 10 + 1) + " ... ");
+				System.out.print("Shot to " + ((int) i / 10 + 1) + "-" + (char) ((int) i % 10 + 65) + " ... ");
 				if (checkIfShipHit((int) i / 10, (int) i % 10) > 0) {
-					ships[i].setText("+");
 					switch (checkIfShipHit((int) i / 10, (int) i % 10)) {
 					case 4:
 						ships[i].setBackground(Color.pink);
+						ships[i].setText("IV");
 						break;
 					case 3:
 						ships[i].setBackground(Color.yellow);
+						ships[i].setText("III");
 						break;
 					case 2:
 						ships[i].setBackground(Color.orange);
+						ships[i].setText("II");
 						break;
 					case 1:
 						ships[i].setBackground(Color.green);
+						ships[i].setText("I");
 						break;
 					}
 					System.out.println("Hit!");
@@ -125,49 +128,59 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 	}
 
+	public boolean checkIfNoOtherShips(int x, int y) {
+
+		try {
+			if (board[x][y] == 0 & board[x + 1][y] == 0 & board[x][y + 1] == 0 & board[x + 1][y + 1] == 0
+					& board[x - 1][y] == 0 & board[x][y - 1] == 0 & board[x - 1][y - 1] == 0 & board[x + 1][y - 1] == 0
+					& board[x - 1][y + 1] == 0) {
+				return true;
+			}
+		} catch (IndexOutOfBoundsException e) {
+		}
+		return false;
+	}
+
 	public void placeShips() {
 		Random random = new Random();
-		int x, y, dir, counter = 0;
+		int x, y, counter = 0;
+		boolean dir;
 
 		/* place 1x 4-square ship */
-		while (counter != 1) {
-			dir = random.nextInt(2); // 0-place to right, 1-place down
-			x = random.nextInt(7);
+		dir = random.nextBoolean(); // 0-place to right, 1-place down
+		if (dir) {
+			x = random.nextInt(10);
 			y = random.nextInt(7);
-			if (dir == 0) {
-				if (board[x][y] == 0 && board[x][y + 1] == 0 && board[x][y + 2] == 0 && board[x][y + 3] == 0) {
-					board[x][y] = 4;
-					board[x][y + 1] = 4;
-					board[x][y + 2] = 4;
-					board[x][y + 3] = 4;
-					counter++;
-				}
-			} else {
-				if (board[x][y] == 0 && board[x + 1][y] == 0 && board[x + 2][y] == 0 && board[x + 3][y] == 0) {
-					board[x][y] = 4;
-					board[x + 1][y] = 4;
-					board[x + 2][y] = 4;
-					board[x + 3][y] = 4;
-					counter++;
-				}
-			}
+			board[x][y] = 4;
+			board[x][y + 1] = 4;
+			board[x][y + 2] = 4;
+			board[x][y + 3] = 4;
+		} else {
+			x = random.nextInt(7);
+			y = random.nextInt(10);
+			board[x][y] = 4;
+			board[x + 1][y] = 4;
+			board[x + 2][y] = 4;
+			board[x + 3][y] = 4;
 		}
 
-		/* place 2x 3-square ships */
 		counter = 0;
-		while (counter != 2) {
-			dir = random.nextInt(2); // 0-place to right, 1-place down
-			x = random.nextInt(8);
-			y = random.nextInt(8);
-			if (dir == 0) {
-				if (board[x][y] == 0 && board[x][y + 1] == 0 && board[x][y + 2] == 0) {
+		/* place 2x 3-square ship */
+		while (counter < 2) {
+			dir = random.nextBoolean(); // 0-place to right, 1-place down
+			if (dir) {
+				x = random.nextInt(10);
+				y = random.nextInt(8);
+				if (checkIfNoOtherShips(x, y) && checkIfNoOtherShips(x, y + 1) && checkIfNoOtherShips(x, y + 2)) {
 					board[x][y] = 3;
 					board[x][y + 1] = 3;
 					board[x][y + 2] = 3;
 					counter++;
 				}
 			} else {
-				if (board[x][y] == 0 && board[x + 1][y] == 0 && board[x + 2][y] == 0) {
+				x = random.nextInt(8);
+				y = random.nextInt(10);
+				if (checkIfNoOtherShips(x, y) && checkIfNoOtherShips(x + 1, y) && checkIfNoOtherShips(x + 2, y)) {
 					board[x][y] = 3;
 					board[x + 1][y] = 3;
 					board[x + 2][y] = 3;
@@ -176,20 +189,22 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 		}
 
-		/* place 3x 2-square ships */
 		counter = 0;
-		while (counter != 3) {
-			dir = random.nextInt(2); // 0-place to right, 1-place down
-			x = random.nextInt(9);
-			y = random.nextInt(9);
-			if (dir == 0) {
-				if (board[x][y] == 0 && board[x][y + 1] == 0) {
+		/* place 3x 2-square ship */
+		while (counter < 3) {
+			dir = random.nextBoolean(); // 0-place to right, 1-place down
+			if (dir) {
+				x = random.nextInt(10);
+				y = random.nextInt(9);
+				if (checkIfNoOtherShips(x, y) && checkIfNoOtherShips(x, y + 1)) {
 					board[x][y] = 2;
 					board[x][y + 1] = 2;
 					counter++;
 				}
 			} else {
-				if (board[x][y] == 0 && board[x + 1][y] == 0) {
+				x = random.nextInt(9);
+				y = random.nextInt(10);
+				if (checkIfNoOtherShips(x, y) && checkIfNoOtherShips(x + 1, y)) {
 					board[x][y] = 2;
 					board[x + 1][y] = 2;
 					counter++;
@@ -197,16 +212,16 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 		}
 
-		/* place 4x 1-square ships */
 		counter = 0;
-		while (counter != 4) {
+		/* place 1x 4-square ship */
+		while (counter < 4) {
 			x = random.nextInt(10);
 			y = random.nextInt(10);
-			if (board[x][y] == 0) {
+			if (checkIfNoOtherShips(x, y)) {
 				board[x][y] = 1;
 				counter++;
 			}
 		}
-	}
 
+	}
 }
