@@ -55,7 +55,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			ships[i].setFocusable(false);
 			centerPanel.add(ships[i]);
 		}
-		placeShips();
+		placeShipsOnBoard();
 		drawTestBoard(board);
 
 		/* ------------JFrame setup-------------- */
@@ -101,6 +101,7 @@ public class MainFrame extends JFrame implements ActionListener {
 						break;
 					}
 					System.out.println("Hit!");
+					shipsSunk++;
 					progressBar.setValue(progressBar.getValue() + 1);
 				} else {
 					ships[i].setText("X");
@@ -109,10 +110,21 @@ public class MainFrame extends JFrame implements ActionListener {
 				}
 			}
 		}
+		if (checkIfAllShipsSunk()) {
+			System.out.println("Victory! All ships sank with " + shotsFired + " shots");
+			int exitOption = JOptionPane.showOptionDialog(null,
+					"Glorious Victory!\nAll ships sank with " + shotsFired + " shots\nPlay again?", "Game Over",
+					JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+			if (exitOption == 0)
+				new MainFrame();
+			else
+				System.exit(0);
+			this.dispose();
+		}
 	}
 
 	public byte checkIfShipHit(int x, int y) {
-		return board[x][y];
+		return board[x][y]; // 0-miss, 1,2,3,4-hit
 	}
 
 	public boolean checkIfAllShipsSunk() {
@@ -120,6 +132,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	public void drawTestBoard(byte[][] board) {
+		// print battleship board to console
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board.length; j++) {
 				System.out.print(board[i][j] + " ");
@@ -129,7 +142,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	public boolean checkIfNoOtherShips(int x, int y) {
-
+		// check if all adjacent fields are free
 		try {
 			if (board[x][y] == 0 & board[x + 1][y] == 0 & board[x][y + 1] == 0 & board[x + 1][y + 1] == 0
 					& board[x - 1][y] == 0 & board[x][y - 1] == 0 & board[x - 1][y - 1] == 0 & board[x + 1][y - 1] == 0
@@ -141,7 +154,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		return false;
 	}
 
-	public void placeShips() {
+	public void placeShipsOnBoard() {
 		Random random = new Random();
 		int x, y, counter = 0;
 		boolean dir;
@@ -222,6 +235,5 @@ public class MainFrame extends JFrame implements ActionListener {
 				counter++;
 			}
 		}
-
 	}
 }
