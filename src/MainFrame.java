@@ -15,6 +15,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	JProgressBar progressBar = new JProgressBar(0, 20);
 	byte shipsSunk = 0;
 	byte shotsFired = 0;
+	double accuracy;
 
 	MainFrame() {
 
@@ -112,9 +113,11 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 		if (checkIfAllShipsSunk()) {
 			System.out.println("Victory! All ships sank with " + shotsFired + " shots");
+			accuracy = (double) shipsSunk / shotsFired * 100;
 			int exitOption = JOptionPane.showOptionDialog(null,
-					"Glorious Victory!\nAll ships sank with " + shotsFired + " shots\nPlay again?", "Game Over",
-					JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+					"Glorious Victory!\nAll ships sank with " + shotsFired + " shots\nAccuracy: " + Math.round(accuracy)
+							+ " %\nPlay again?",
+					"Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 			if (exitOption == 0)
 				new MainFrame();
 			else
