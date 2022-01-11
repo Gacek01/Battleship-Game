@@ -9,9 +9,9 @@ public class MainFrame extends JFrame implements ActionListener {
 	public final int UNIT_SIZE = 50;
 	byte[][] board = new byte[10][10];
 	JButton[] ships = new JButton[100];
-	JLabel[] labels = new JLabel[10];
+	MainLabel[] labels = new MainLabel[10];
 	JLabel shotsLabel = new JLabel("0");
-	Font mainFont = new Font("Arial", Font.BOLD, 25);
+	Font mainFont = new Font("Calibri", Font.BOLD, 20);
 	JProgressBar progressBar = new JProgressBar(0, 20);
 	byte shipsSunk = 0;
 	byte shotsFired = 0;
@@ -19,26 +19,16 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	MainFrame() {
 
-		/* ------------Top axis setup-------------- */
-		JPanel topPanel = new JPanel();
-		topPanel.setLayout(new GridLayout(1, 10, 0, 0));
-		topPanel.setBounds(15, 0, 500, 50);
-
-		for (int i = 0; i < 10; i++) {
-			labels[i] = new JLabel(String.valueOf((char) (i + 65)));
-			labels[i].setFont(mainFont);
-			topPanel.add(labels[i]);
-		}
-
 		/* ------------Bottom panel, progress info setup-------------- */
 		JPanel bottomPanel = new JPanel();
-		bottomPanel.setBounds(0, 600, 500, 100);
+		bottomPanel.setBounds(0, 550, 600, 100);
+		bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		progressBar.setValue(0);
 		progressBar.setStringPainted(true);
 		progressBar.setFont(mainFont);
-		progressBar.setPreferredSize(new Dimension(500, 100));
+		progressBar.setPreferredSize(new Dimension(550, 50));
 		progressBar.setForeground(Color.red);
-		progressBar.setBackground(Color.blue);
+		progressBar.setBackground(Color.BLACK);
 		progressBar.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
 		shotsLabel.setFont(mainFont);
 		bottomPanel.add(new JLabel("Shots fired: ")).setFont(mainFont);
@@ -47,10 +37,20 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		/* ------------Main Game Board setup-------------- */
 		JPanel centerPanel = new JPanel();
-		centerPanel.setLayout(new GridLayout(10, 10, 0, 0));
-		centerPanel.setBounds(0, 50, 500, 500);
+		centerPanel.setLayout(new GridLayout(12, 11, 0, 0));
+		centerPanel.setBounds(0, 0, 550, 550);
 
+		// add top labels
+		centerPanel.add(new JLabel());
+		for (int i = 0; i < 10; i++) {
+			labels[i] = new MainLabel(String.valueOf((char) (i + 65)));
+			centerPanel.add(labels[i]);
+		}
+
+		// add left side labels and buttons
 		for (int i = 0; i < 100; i++) {
+			if (i % 10 == 0)
+				centerPanel.add(new MainLabel(String.valueOf(i / 10 + 1)));
 			ships[i] = new JButton(String.valueOf(i + 1));
 			ships[i].addActionListener(this);
 			ships[i].setFocusable(false);
@@ -61,14 +61,13 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		/* ------------JFrame setup-------------- */
 		this.setIconImage(new ImageIcon("src//ship.png").getImage());
-		this.setSize(515, 750);
+		this.setSize(600, 700);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 		this.setLayout(null);
-		this.setTitle("+++Battleship+++");
+		this.setTitle("+++ Battleship +++");
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
-		this.add(topPanel);
 		this.add(centerPanel);
 		this.add(bottomPanel);
 	}
@@ -85,16 +84,19 @@ public class MainFrame extends JFrame implements ActionListener {
 				if (checkIfShipHit((int) i / 10, (int) i % 10) > 0) {
 					switch (checkIfShipHit((int) i / 10, (int) i % 10)) {
 					case 4:
-						ships[i].setBackground(Color.pink);
+						ships[i].setBackground(Color.red);
 						ships[i].setText("IV");
+						ships[i].setBorder(BorderFactory.createLineBorder(Color.red));
 						break;
 					case 3:
 						ships[i].setBackground(Color.yellow);
 						ships[i].setText("III");
+						ships[i].setBorder(BorderFactory.createLineBorder(Color.yellow));
 						break;
 					case 2:
 						ships[i].setBackground(Color.orange);
 						ships[i].setText("II");
+						ships[i].setBorder(BorderFactory.createLineBorder(Color.orange));
 						break;
 					case 1:
 						ships[i].setBackground(Color.green);
