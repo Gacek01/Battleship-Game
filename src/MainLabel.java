@@ -7,12 +7,10 @@ import javax.swing.SwingConstants;
 
 public class MainLabel extends JLabel {
 
-	Font labelFont = new Font("Arial", Font.BOLD, 25);
-
 	MainLabel(String text) {
 
 		this.setText(text);
-		this.setFont(labelFont);
+		this.setFont(new Font("Arial", Font.BOLD, MainFrame.UNIT_SIZE/2));
 		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		this.setBackground(Color.black);
 		this.setForeground(Color.white);

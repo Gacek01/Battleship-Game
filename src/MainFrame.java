@@ -6,27 +6,28 @@ import javax.swing.*;
 
 public class MainFrame extends JFrame implements ActionListener {
 
-	public final int UNIT_SIZE = 50;
+	public final static int UNIT_SIZE = 50;
 	byte[][] board = new byte[10][10];
 	JButton[] ships = new JButton[100];
 	MainLabel[] labels = new MainLabel[10];
 	JLabel shotsLabel = new JLabel("0");
-	Font mainFont = new Font("Calibri", Font.BOLD, 20);
-	JProgressBar progressBar = new JProgressBar(0, 20);
+	Font mainFont = new Font("Calibri", Font.BOLD, UNIT_SIZE / 2);
+	JProgressBar progressBar = new JProgressBar(0, UNIT_SIZE / 2);
 	byte shipsSunk = 0;
 	byte shotsFired = 0;
-	double accuracy;
+	ImageIcon icon = new ImageIcon("src//ship.png");
 
 	MainFrame() {
 
 		/* ------------Bottom panel, progress info setup-------------- */
 		JPanel bottomPanel = new JPanel();
-		bottomPanel.setBounds(0, 550, 600, 100);
+		bottomPanel.setBounds(0, 11 * UNIT_SIZE, 12 * UNIT_SIZE, 2 * UNIT_SIZE);
 		bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		progressBar.setValue(0);
+		progressBar.setMaximum(20);
 		progressBar.setStringPainted(true);
 		progressBar.setFont(mainFont);
-		progressBar.setPreferredSize(new Dimension(550, 50));
+		progressBar.setPreferredSize(new Dimension(11 * UNIT_SIZE, UNIT_SIZE));
 		progressBar.setForeground(Color.red);
 		progressBar.setBackground(Color.BLACK);
 		progressBar.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
@@ -38,7 +39,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		/* ------------Main Game Board setup-------------- */
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new GridLayout(12, 11, 0, 0));
-		centerPanel.setBounds(0, 0, 550, 550);
+		centerPanel.setBounds(0, 0, 11 * UNIT_SIZE, 11 * UNIT_SIZE);
 
 		// add top labels
 		centerPanel.add(new JLabel());
@@ -51,7 +52,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		for (int i = 0; i < 100; i++) {
 			if (i % 10 == 0)
 				centerPanel.add(new MainLabel(String.valueOf(i / 10 + 1)));
-			ships[i] = new JButton(String.valueOf(i + 1));
+			ships[i] = new GameButton(String.valueOf(i + 1));
 			ships[i].addActionListener(this);
 			ships[i].setFocusable(false);
 			centerPanel.add(ships[i]);
@@ -61,11 +62,11 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		/* ------------JFrame setup-------------- */
 		this.setIconImage(new ImageIcon("src//ship.png").getImage());
-		this.setSize(600, 700);
+		this.setSize(12 * UNIT_SIZE, 14 * UNIT_SIZE);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 		this.setLayout(null);
-		this.setTitle("+++ Battleship +++");
+		this.setTitle("Battleship");
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		this.add(centerPanel);
@@ -87,39 +88,42 @@ public class MainFrame extends JFrame implements ActionListener {
 						ships[i].setBackground(Color.red);
 						ships[i].setText("IV");
 						ships[i].setBorder(BorderFactory.createLineBorder(Color.red));
+						ships[i].setIcon(icon);
 						break;
 					case 3:
 						ships[i].setBackground(Color.yellow);
 						ships[i].setText("III");
 						ships[i].setBorder(BorderFactory.createLineBorder(Color.yellow));
+						ships[i].setIcon(icon);
 						break;
 					case 2:
 						ships[i].setBackground(Color.orange);
 						ships[i].setText("II");
 						ships[i].setBorder(BorderFactory.createLineBorder(Color.orange));
+						ships[i].setIcon(icon);
 						break;
 					case 1:
 						ships[i].setBackground(Color.green);
 						ships[i].setText("I");
+						ships[i].setIcon(icon);
 						break;
 					}
 					System.out.println("Hit!");
 					shipsSunk++;
-					progressBar.setValue(progressBar.getValue() + 1);
+					progressBar.setValue(shipsSunk);
+					progressBar.setString("Ships destroyed: " + shipsSunk + "/20");
 				} else {
 					ships[i].setText("X");
-					ships[i].setBackground(Color.lightGray);
+					ships[i].setBackground(new Color(0, 85, 128));
 					System.out.println("Miss...");
 				}
 			}
 		}
 		if (checkIfAllShipsSunk()) {
 			System.out.println("Victory! All ships sank with " + shotsFired + " shots");
-			accuracy = (double) shipsSunk / shotsFired * 100;
 			int exitOption = JOptionPane.showOptionDialog(null,
-					"Glorious Victory!\nAll ships sank with " + shotsFired + " shots\nAccuracy: " + Math.round(accuracy)
-							+ " %\nPlay again?",
-					"Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+					"Glorious Victory!\nAll ships sank with " + shotsFired + " shots\nPlay again?", "Game Over",
+					JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 			if (exitOption == 0)
 				new MainFrame();
 			else
@@ -128,7 +132,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 	}
 
-	public byte checkIfShipHit(int x, int y) {
+	public int checkIfShipHit(int x, int y) {
 		return board[x][y]; // 0-miss, 1,2,3,4-hit
 	}
 
